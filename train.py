@@ -7,7 +7,8 @@ img_size,efficientnetv2_rw_s
 
 path='/media/talha/data/image/classification/2D/Covid/data5/'
 # In[1]:
-
+import logging
+logging.getLogger("lightning").setLevel(logging.ERROR)
 import logging 
 import numpy as np
 from pytorch_lightning import seed_everything, LightningModule, Trainer
@@ -28,29 +29,21 @@ from PIL import Image
 import cv2
 import os
 
-# In[2]:
-
-
 import albumentations as A
 
 from albumentations.pytorch import ToTensorV2
 
-def augmentation(img_size=288):
+def augmentation(img_size=224):
     aug= A.Compose([
-                A.Resize(img_size,img_size),
+                A.Resize(img_size+32,img_size+32),
                 A.CenterCrop(img_size,img_size),
                 A.HorizontalFlip(0.5),
-                #A.VerticalFlip(0.5),
-                A.ShiftScaleRotate(rotate_limit=10),
-                A.Blur(),
-                A.Sharpen(), 
-                A.CoarseDropout(max_holes=8, max_height=16, max_width=16),
-                A.CLAHE(0.5),
+                A.ShiftScaleRotate(rotate_limit=30),
+                #A.CLAHE(always_apply=True,p=1),
                 A.Normalize(),
                 ToTensorV2(p=1.0),
             ], p=1.0)
     return aug
-
 
 # In[3]:
 
@@ -157,9 +150,10 @@ class OurModel(LightningModule):
         #parameters
         self.lr=1e-3
         self.batch_size=batch_size
-        self.numworker=4
+        self.numworker=8
         self.criterion=nn.SmoothL1Loss()
         self.metrics=torchmetrics.MeanAbsoluteError()
+
         self.trainloss,self.valloss,self.dfs=[],[],[]
     def forward(self,x):
         x= self.model(x)
@@ -218,7 +212,7 @@ class OurModel(LightningModule):
         mae=torch.stack([x["mae"] for x in outputs]).mean().detach().cpu().numpy().round(2)
         self.valloss.append(loss)
         self.log('val_loss', loss)
-
+        self.log('val_mae',mae)
 
     def test_dataloader(self):
         return DataLoader(DataReader(test_split,aug,True), batch_size = self.batch_size,
@@ -234,14 +228,77 @@ class OurModel(LightningModule):
         df=pd.DataFrame(zip(images_name,pred))
         df.to_csv('predictions/predictions_{}.csv'.format(self.fold),index=False,header=None)
         #self.dfs.append(df)
-# In[14]:
+
+
+
 from sklearn.model_selection import KFold,GroupKFold
 import csv
 logfile='log.txt'
 
-model_dict={'ecaresnet50t':{'batchsize':72,'img_size':224},'seresnext50_32x4d':{'batchsize':72,'img_size':224},
-'resnest50d':{'batchsize':72,'img_size':224},'skresnext50_32x4d':{'batchsize':48,'img_size':224},'resnet200d':{'batchsize':24,'img_size':256}}
+model_dict={
+    'resnest50d':{'batchsize':72,'img_size':224},'resnetrs50':{'batchsize':72,'img_size':224},
+    'seresnext50_32x4d':{'batchsize':72,'img_size':224},'ecaresnet50t':{'batchsize':72,'img_size':224},
+    'skresnext50_32x4d':{'batchsize':48,'img_size':224},'seresnet50':{'batchsize':48,'img_size':224},
+    }
 
+
+
+def pl_trainer(df,fold,scheduler,batch_size):
+    
+    train_split=df.loc[train_idx].reset_index(drop=True)
+    val_split=df.loc[val_idx].reset_index(drop=True)
+
+    model=OurModel(train_split,val_split,fold,scheduler,batch_size)
+
+    trainer = Trainer(max_epochs=50, auto_lr_find=False, auto_scale_batch_size=False,
+                    deterministic=True,
+                    gpus=-1,precision=16,
+                    accumulate_grad_batches=4,
+                    stochastic_weight_avg=False,
+                    enable_progress_bar = False,
+                    #log_every_n_steps=10,
+                    num_sanity_val_steps=0,
+                    #limit_train_batches=20,
+                    #limit_val_batches=5,
+                    callbacks=[lr_monitor,checkpoint_callback],
+                    
+                    #logger=logger
+                    )
+    return trainer,model
+
+def model_validate(trainer,model):
+    res=trainer.validate(model)
+    loss=np.round(res[0]['val_loss'],3)
+    mae=np.round(res[0]['val_mae'],3)
+
+    trainer.test(model)
+    return loss,mae
+
+def logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size,img_size):
+    avg_loss=np.round(np.mean(fold_score_loss),3)
+    avg_score=np.round(np.mean(fold_score_metric),3)
+    open(logfile, 'a').write("all folds of model {} with scheduler {} are completed. Loss {} and Score {} \n".format(model_name,scheduler,avg_loss,avg_score))
+    
+    # dfs=[]
+    # for i in range(5):
+    #     dfs.append(pd.read_csv('predictions/predictions_{}.csv'.format(i),header=None))
+
+    # mean_pred=np.mean([i.values[:,1].astype('float') for i in dfs],0)
+    # dfs[0].iloc[:,1]=mean_pred
+    # dfs[0].to_csv('predictions/predictions.csv',index=False,header=None)
+    # dfs[0].to_csv(os.path.join(csv_path_sch,'predictions.csv'),index=False,header=None)
+
+    with open('result.csv', 'a', newline='') as csvfile:
+        fieldnames = ['model_name','scheduler','batchsize','loss','score','img_size']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writerow({'model_name':model_name, 'scheduler':scheduler,'batchsize':batch_size,'loss':avg_loss,'score':avg_score,'img_size':img_size})
+    open(logfile, 'a').write("============= model completed ================= \n")
+    # # sleep(60*5)
+
+
+
+
+validation=True
 if __name__ == "__main__":
 
     seed_everything(0)
@@ -259,7 +316,7 @@ if __name__ == "__main__":
 
         print('model name',model_name,batch_size,img_size)
         for scheduler in ['cosine']:
-            fold_score=[]
+            fold_score_metric,fold_score_loss=[],[]
             model_path=os.path.join('models',model_name)
             model_path_sch=os.path.join(model_path,scheduler)
             
@@ -277,60 +334,33 @@ if __name__ == "__main__":
 
             fold_completed=len(glob(model_path_sch+'/*.pth'))
             print('fold_completed',model_name, scheduler,fold_completed)
-            if fold_completed<5:#== mean fold completed, < not completed
+            if fold_completed!=5: #if total save folds are not 5
                 for fold,(train_idx,val_idx) in enumerate(kfold.split(df,groups=df.subject)):
-                    if fold+1>fold_completed:#if num folds greater than fold completed
-                        print('{}-----------fold no---------{}---------------{}-------'.format(scheduler,fold,model_name))
-                        train_split=df.loc[train_idx].reset_index(drop=True)
-                        val_split=df.loc[val_idx].reset_index(drop=True)
-
-                        model=OurModel(train_split,val_split,fold,scheduler,batch_size)
-
-                        trainer = Trainer(max_epochs=50, auto_lr_find=False, auto_scale_batch_size=False,
-                                        deterministic=True,
-                                        gpus=-1,precision=16,
-                                        accumulate_grad_batches=4,
-                                        stochastic_weight_avg=False,
-                                        enable_progress_bar = False,
-                                        #log_every_n_steps=10,
-                                        num_sanity_val_steps=0,
-                                        #limit_train_batches=20,
-                                        #limit_val_batches=5,
-                                        callbacks=[lr_monitor,checkpoint_callback],
-                                        #resume_from_checkpoint=path+'code/checkpoints/lambdalast.ckpt',
-                                        #logger=logger
-                                        )
-
-                        trainer.fit(model)
-                        #model.load_state_dict(torch.load(os.path.join(path,'code',model_path_sch,'model_{}.pth'.format(fold))))
-                        #train_loss.append(model.trainloss)
-                        #val_loss.append(model.valloss)
+                    if fold+1>fold_completed:#when value of fold become greater than last total fold saved, start training
+                        print('training of model',model_name,fold)
+                        trainer,model=pl_trainer(df,fold,scheduler,batch_size)
                         
-                        res=trainer.validate(model)
-                        fold_score.append(res[0]['val_loss'])
-
-                        trainer.test(model)
-                        
+                        #during train, check if last checkpoint is there
+                        if os.path.exists('checkpoints/last.ckpt'):
+                            print('resume training')
+                            trainer.fit(model,ckpt_path='checkpoints/last.ckpt') #resume from last checkpoint
+                        else:
+                            trainer.fit(model) 
+                        os.remove('checkpoints/last.ckpt') #delte last checkpoint after training
                         torch.save(model.state_dict(), os.path.join(path,'code',model_path_sch,'model_{}.pth'.format(fold)))
-                
-                        #open(logfile, 'a').write("fold {}  of model {} with scheduler {} is completed \n".format(fold,model_name,scheduler))
-                        sleep(60)
-                avg=np.round(np.mean(fold_score),3)
-                # open(logfile, 'a').write("all folds of model {} with scheduler {} are completed \n".format(model_name,scheduler))
-                dfs=[]
-                for i in range(5):
-                    dfs.append(pd.read_csv('predictions/predictions_{}.csv'.format(i),header=None))
-
-                #mean_pred=np.average([i.values[:,1].astype('float') for i in dfs],0,weights=fold_score)
-                mean_pred=np.mean([i.values[:,1].astype('float') for i in dfs],0)
-                dfs[0].iloc[:,1]=mean_pred
-                dfs[0].to_csv('predictions/predictions.csv',index=False,header=None)
-                dfs[0].to_csv(os.path.join(csv_path_sch,'predictions.csv'),index=False,header=None)
-
-
-                with open('result.csv', 'a', newline='') as csvfile:
-                    fieldnames = ['model_name','scheduler','batchsize','valscore','img_size']
-                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                    writer.writerow({'model_name':model_name, 'scheduler':scheduler,'batchsize':model.batch_size,'valscore':avg,'img_size':img_size})
-                # # open(logfile, 'a').write("============= model completed ================= \n")
-                # # sleep(60*5)
+                        res=model_validate(trainer,model)
+                        fold_score_loss.append(res[0]),fold_score_metric.append(res[1])
+                        open(logfile, 'a').write("fold {}  of model {} with scheduler {} is completed. Loss {} and score {} \n".format(fold,model_name,scheduler,res[0],res[1]))
+                logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size,img_size)
+            else:
+                if validation:
+                    for fold,(train_idx,val_idx) in enumerate(kfold.split(df,groups=df.subject)):
+                        print('only validation of model',model_name,fold)
+                        trainer,model=pl_trainer(df,fold,scheduler,batch_size)
+                        model.load_state_dict(torch.load(os.path.join(path,'code',model_path_sch,'model_{}.pth'.format(fold))))
+                        res=model_validate(trainer,model)
+                        fold_score_loss.append(res[0]),fold_score_metric.append(res[1])
+                        open(logfile, 'a').write("fold {}  of model {} with scheduler {} is completed. Loss {} and score {} \n".format(fold,model_name,scheduler,res[0],res[1]))
+                    logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size,img_size)
+                else:
+                    print('model {} is trained already'.format(model_name))
