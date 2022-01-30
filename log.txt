@@ -1,0 +1,168 @@
+fold 0  of model resnest50d with scheduler warm is completed. Loss 4.02 and score 4.41 
+fold 1  of model resnest50d with scheduler warm is completed. Loss 3.97 and score 4.37 
+fold 2  of model resnest50d with scheduler warm is completed. Loss 3.93 and score 4.31 
+fold 3  of model resnest50d with scheduler warm is completed. Loss 2.44 and score 2.84 
+fold 4  of model resnest50d with scheduler warm is completed. Loss 3.92 and score 4.35 
+all folds of model resnest50d with scheduler warm are completed. Loss 3.656 and Score 4.056 
+============= model completed ================= 
+fold 0  of model resnest50d with scheduler cosine is completed. Loss 4.09 and score 4.48 
+fold 1  of model resnest50d with scheduler cosine is completed. Loss 3.97 and score 4.36 
+fold 2  of model resnest50d with scheduler cosine is completed. Loss 4.09 and score 4.48 
+fold 3  of model resnest50d with scheduler cosine is completed. Loss 2.4 and score 2.79 
+fold 4  of model resnest50d with scheduler cosine is completed. Loss 3.97 and score 4.39 
+all folds of model resnest50d with scheduler cosine are completed. Loss 3.704 and Score 4.1 
+============= model completed ================= 
+fold 0  of model resnetrs50 with scheduler warm is completed. Loss 4.02 and score 4.4 
+fold 1  of model resnetrs50 with scheduler warm is completed. Loss 3.96 and score 4.37 
+fold 2  of model resnetrs50 with scheduler warm is completed. Loss 4.31 and score 4.69 
+fold 3  of model resnetrs50 with scheduler warm is completed. Loss 2.62 and score 3.02 
+fold 4  of model resnetrs50 with scheduler warm is completed. Loss 3.92 and score 4.34 
+all folds of model resnetrs50 with scheduler warm are completed. Loss 3.766 and Score 4.164 
+============= model completed ================= 
+fold 0  of model resnetrs50 with scheduler cosine is completed. Loss 3.89 and score 4.27 
+fold 1  of model resnetrs50 with scheduler cosine is completed. Loss 4.01 and score 4.4 
+fold 2  of model resnetrs50 with scheduler cosine is completed. Loss 4.32 and score 4.7 
+fold 3  of model resnetrs50 with scheduler cosine is completed. Loss 2.55 and score 2.95 
+fold 4  of model resnetrs50 with scheduler cosine is completed. Loss 4.03 and score 4.45 
+all folds of model resnetrs50 with scheduler cosine are completed. Loss 3.76 and Score 4.154 
+============= model completed ================= 
+fold 0  of model seresnext50_32x4d with scheduler warm is completed. Loss 3.67 and score 4.07 
+fold 1  of model seresnext50_32x4d with scheduler warm is completed. Loss 4.1 and score 4.5 
+fold 2  of model seresnext50_32x4d with scheduler warm is completed. Loss 4.37 and score 4.77 
+fold 3  of model seresnext50_32x4d with scheduler warm is completed. Loss 2.35 and score 2.76 
+fold 4  of model seresnext50_32x4d with scheduler warm is completed. Loss 4.25 and score 4.68 
+all folds of model seresnext50_32x4d with scheduler warm are completed. Loss 3.748 and Score 4.156 
+============= model completed ================= 
+fold 0  of model seresnext50_32x4d with scheduler cosine is completed. Loss 3.75 and score 4.14 
+fold 1  of model seresnext50_32x4d with scheduler cosine is completed. Loss 4.02 and score 4.42 
+fold 2  of model seresnext50_32x4d with scheduler cosine is completed. Loss 3.82 and score 4.22 
+fold 3  of model seresnext50_32x4d with scheduler cosine is completed. Loss 2.39 and score 2.8 
+fold 4  of model seresnext50_32x4d with scheduler cosine is completed. Loss 4.14 and score 4.57 
+all folds of model seresnext50_32x4d with scheduler cosine are completed. Loss 3.624 and Score 4.03 
+============= model completed ================= 
+fold 0  of model ecaresnet50t with scheduler warm is completed. Loss 4.37 and score 4.76 
+fold 1  of model ecaresnet50t with scheduler warm is completed. Loss 4.2 and score 4.61 
+fold 2  of model ecaresnet50t with scheduler warm is completed. Loss 4.77 and score 5.16 
+fold 3  of model ecaresnet50t with scheduler warm is completed. Loss 2.71 and score 3.12 
+fold 4  of model ecaresnet50t with scheduler warm is completed. Loss 4.51 and score 4.94 
+all folds of model ecaresnet50t with scheduler warm are completed. Loss 4.112 and Score 4.518 
+============= model completed ================= 
+fold 0  of model ecaresnet50t with scheduler cosine is completed. Loss 4.23 and score 4.64 
+fold 1  of model ecaresnet50t with scheduler cosine is completed. Loss 4.19 and score 4.58 
+fold 2  of model ecaresnet50t with scheduler cosine is completed. Loss 4.42 and score 4.82 
+fold 3  of model ecaresnet50t with scheduler cosine is completed. Loss 2.83 and score 3.24 
+fold 4  of model ecaresnet50t with scheduler cosine is completed. Loss 4.58 and score 5.02 
+all folds of model ecaresnet50t with scheduler cosine are completed. Loss 4.05 and Score 4.46 
+============= model completed ================= 
+fold 0  of model skresnext50_32x4d with scheduler warm is completed. Loss 3.86 and score 4.25 
+fold 1  of model skresnext50_32x4d with scheduler warm is completed. Loss 4.24 and score 4.64 
+fold 2  of model skresnext50_32x4d with scheduler warm is completed. Loss 4.09 and score 4.48 
+fold 3  of model skresnext50_32x4d with scheduler warm is completed. Loss 2.6 and score 2.98 
+fold 4  of model skresnext50_32x4d with scheduler warm is completed. Loss 4.3 and score 4.72 
+all folds of model skresnext50_32x4d with scheduler warm are completed. Loss 3.818 and Score 4.214 
+============= model completed ================= 
+fold 0  of model skresnext50_32x4d with scheduler cosine is completed. Loss 4.29 and score 4.67 
+fold 1  of model skresnext50_32x4d with scheduler cosine is completed. Loss 4.32 and score 4.72 
+fold 2  of model skresnext50_32x4d with scheduler cosine is completed. Loss 4.42 and score 4.79 
+fold 3  of model skresnext50_32x4d with scheduler cosine is completed. Loss 2.59 and score 2.99 
+fold 4  of model skresnext50_32x4d with scheduler cosine is completed. Loss 4.25 and score 4.67 
+all folds of model skresnext50_32x4d with scheduler cosine are completed. Loss 3.974 and Score 4.368 
+============= model completed ================= 
+fold 0  of model seresnet50 with scheduler warm is completed. Loss 3.58 and score 3.96 
+fold 1  of model seresnet50 with scheduler warm is completed. Loss 4.17 and score 4.56 
+fold 2  of model seresnet50 with scheduler warm is completed. Loss 4.46 and score 4.84 
+fold 3  of model seresnet50 with scheduler warm is completed. Loss 2.73 and score 3.14 
+fold 4  of model seresnet50 with scheduler warm is completed. Loss 4.08 and score 4.51 
+all folds of model seresnet50 with scheduler warm are completed. Loss 3.804 and Score 4.202 
+============= model completed ================= 
+fold 0  of model seresnet50 with scheduler cosine is completed. Loss 4.06 and score 4.46 
+fold 1  of model seresnet50 with scheduler cosine is completed. Loss 3.97 and score 4.37 
+fold 2  of model seresnet50 with scheduler cosine is completed. Loss 4.43 and score 4.82 
+fold 3  of model seresnet50 with scheduler cosine is completed. Loss 2.87 and score 3.28 
+fold 4  of model seresnet50 with scheduler cosine is completed. Loss 4.15 and score 4.58 
+all folds of model seresnet50 with scheduler cosine are completed. Loss 3.896 and Score 4.302 
+============= model completed ================= 
+fold 0  of model ensemble_se with scheduler warm is completed. Loss 3.64 and score 4.03 
+fold 1  of model ensemble_se with scheduler warm is completed. Loss 3.9 and score 4.3 
+fold 2  of model ensemble_se with scheduler warm is completed. Loss 4.37 and score 4.77 
+fold 3  of model ensemble_se with scheduler warm is completed. Loss 2.38 and score 2.79 
+fold 4  of model ensemble_se with scheduler warm is completed. Loss 3.87 and score 4.3 
+all folds of model ensemble_se with scheduler warm are completed. Loss 3.632 and Score 4.038 
+============= model completed ================= 
+fold 0  of model ensemble_se with scheduler cosine is completed. Loss 3.6 and score 3.99 
+fold 1  of model ensemble_se with scheduler cosine is completed. Loss 3.83 and score 4.21 
+fold 2  of model ensemble_se with scheduler cosine is completed. Loss 4.2 and score 4.58 
+fold 3  of model ensemble_se with scheduler cosine is completed. Loss 2.34 and score 2.75 
+fold 4  of model ensemble_se with scheduler cosine is completed. Loss 3.98 and score 4.4 
+all folds of model ensemble_se with scheduler cosine are completed. Loss 3.59 and Score 3.986 
+============= model completed ================= 
+fold 0  of model ensemble with scheduler warm is completed. Loss 3.66 and score 4.06 
+fold 1  of model ensemble with scheduler warm is completed. Loss 3.9 and score 4.3 
+fold 2  of model ensemble with scheduler warm is completed. Loss 4.36 and score 4.76 
+fold 3  of model ensemble with scheduler warm is completed. Loss 2.34 and score 2.76 
+fold 4  of model ensemble with scheduler warm is completed. Loss 3.92 and score 4.35 
+all folds of model ensemble with scheduler warm are completed. Loss 3.636 and Score 4.046 
+============= model completed ================= 
+fold 0  of model ensemble with scheduler cosine is completed. Loss 3.56 and score 3.95 
+fold 1  of model ensemble with scheduler cosine is completed. Loss 3.75 and score 4.14 
+fold 2  of model ensemble with scheduler cosine is completed. Loss 4.25 and score 4.63 
+fold 3  of model ensemble with scheduler cosine is completed. Loss 2.32 and score 2.72 
+fold 4  of model ensemble with scheduler cosine is completed. Loss 3.88 and score 4.3 
+all folds of model ensemble with scheduler cosine are completed. Loss 3.552 and Score 3.948 
+============= model completed ================= 
+fold 0  of model resnest50d with scheduler constant is completed. Loss 3.86 and score 4.23 
+fold 1  of model resnest50d with scheduler constant is completed. Loss 4.79 and score 5.21 
+fold 2  of model resnest50d with scheduler constant is completed. Loss 4.84 and score 5.25 
+fold 3  of model resnest50d with scheduler constant is completed. Loss 2.95 and score 3.35 
+fold 4  of model resnest50d with scheduler constant is completed. Loss 6.9 and score 7.32 
+all folds of model resnest50d with scheduler constant are completed. Loss 4.668 and Score 5.072 
+============= model completed ================= 
+fold 0  of model resnetrs50 with scheduler constant is completed. Loss 6.09 and score 6.55 
+fold 1  of model resnetrs50 with scheduler constant is completed. Loss 3.88 and score 4.26 
+fold 2  of model resnetrs50 with scheduler constant is completed. Loss 4.31 and score 4.69 
+fold 3  of model resnetrs50 with scheduler constant is completed. Loss 2.8 and score 3.2 
+fold 4  of model resnetrs50 with scheduler constant is completed. Loss 4.08 and score 4.52 
+all folds of model resnetrs50 with scheduler constant are completed. Loss 4.232 and Score 4.644 
+============= model completed ================= 
+fold 0  of model seresnext50_32x4d with scheduler constant is completed. Loss 4.92 and score 5.32 
+fold 1  of model seresnext50_32x4d with scheduler constant is completed. Loss 4.16 and score 4.57 
+fold 2  of model seresnext50_32x4d with scheduler constant is completed. Loss 4.33 and score 4.71 
+fold 3  of model seresnext50_32x4d with scheduler constant is completed. Loss 2.79 and score 3.2 
+fold 4  of model seresnext50_32x4d with scheduler constant is completed. Loss 3.69 and score 4.11 
+all folds of model seresnext50_32x4d with scheduler constant are completed. Loss 3.978 and Score 4.382 
+============= model completed ================= 
+fold 0  of model ecaresnet50t with scheduler constant is completed. Loss 4.72 and score 5.13 
+fold 1  of model ecaresnet50t with scheduler constant is completed. Loss 4.12 and score 4.51 
+fold 2  of model ecaresnet50t with scheduler constant is completed. Loss 4.73 and score 5.12 
+fold 3  of model ecaresnet50t with scheduler constant is completed. Loss 2.97 and score 3.36 
+fold 4  of model ecaresnet50t with scheduler constant is completed. Loss 6.31 and score 6.74 
+all folds of model ecaresnet50t with scheduler constant are completed. Loss 4.57 and Score 4.972 
+============= model completed ================= 
+fold 0  of model skresnext50_32x4d with scheduler constant is completed. Loss 4.55 and score 4.95 
+fold 1  of model skresnext50_32x4d with scheduler constant is completed. Loss 4.8 and score 5.2 
+fold 2  of model skresnext50_32x4d with scheduler constant is completed. Loss 4.81 and score 5.17 
+fold 3  of model skresnext50_32x4d with scheduler constant is completed. Loss 2.62 and score 3.02 
+fold 4  of model skresnext50_32x4d with scheduler constant is completed. Loss 4.62 and score 5.04 
+all folds of model skresnext50_32x4d with scheduler constant are completed. Loss 4.28 and Score 4.676 
+============= model completed ================= 
+fold 0  of model seresnet50 with scheduler constant is completed. Loss 3.66 and score 4.03 
+fold 1  of model seresnet50 with scheduler constant is completed. Loss 5.16 and score 5.58 
+fold 2  of model seresnet50 with scheduler constant is completed. Loss 4.79 and score 5.16 
+fold 3  of model seresnet50 with scheduler constant is completed. Loss 2.68 and score 3.07 
+fold 4  of model seresnet50 with scheduler constant is completed. Loss 4.65 and score 5.08 
+all folds of model seresnet50 with scheduler constant are completed. Loss 4.188 and Score 4.584 
+============= model completed ================= 
+fold 0  of model ensemble_se with scheduler constant is completed. Loss 3.81 and score 4.21 
+fold 1  of model ensemble_se with scheduler constant is completed. Loss 4.05 and score 4.44 
+fold 2  of model ensemble_se with scheduler constant is completed. Loss 4.22 and score 4.61 
+fold 3  of model ensemble_se with scheduler constant is completed. Loss 2.57 and score 2.98 
+fold 4  of model ensemble_se with scheduler constant is completed. Loss 4.21 and score 4.64 
+all folds of model ensemble_se with scheduler constant are completed. Loss 3.772 and Score 4.176 
+============= model completed ================= 
+fold 0  of model ensemble with scheduler constant is completed. Loss 3.85 and score 4.25 
+fold 1  of model ensemble with scheduler constant is completed. Loss 3.98 and score 4.37 
+fold 2  of model ensemble with scheduler constant is completed. Loss 4.33 and score 4.73 
+fold 3  of model ensemble with scheduler constant is completed. Loss 2.55 and score 2.95 
+fold 4  of model ensemble with scheduler constant is completed. Loss 3.88 and score 4.31 
+all folds of model ensemble with scheduler constant are completed. Loss 3.718 and Score 4.122 
+============= model completed ================= 
