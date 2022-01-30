@@ -28,17 +28,13 @@ import albumentations as A
 
 from albumentations.pytorch import ToTensorV2
 
+
 def augmentation(img_size=224):
     aug= A.Compose([
                 A.Resize(img_size+32,img_size+32),
                 A.CenterCrop(img_size,img_size),
                 A.HorizontalFlip(0.5),
                 A.ShiftScaleRotate(rotate_limit=30),
-                #A.RandomBrightnessContrast(),
-                # A.Blur(),A.RandomGamma(),
-                # A.Sharpen(), A.GaussNoise(),
-                # A.CoarseDropout(max_holes=8, max_height=16, max_width=16),
-                A.CLAHE(0.5),
                 A.Normalize(),
                 ToTensorV2(p=1.0),
             ], p=1.0)
@@ -149,38 +145,38 @@ class OurModel(LightningModule):
         self.scheduler=scheduler
         #########TIMM#################
         self.model1=Model(pre_model_name[0])
-        self.model1.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[0],'cosine','model_{}.pth'.format(fold))))
+        self.model1.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[0],scheduler,'model_{}.pth'.format(fold))))
         self.model1=self.model1.model
         for p in self.model1.parameters():
             p.requires_grad = False
 
 
         self.model2=Model(pre_model_name[1])
-        self.model2.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[1],'cosine','model_{}.pth'.format(fold))))
+        self.model2.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[1],scheduler,'model_{}.pth'.format(fold))))
         self.model2=self.model2.model
         for p in self.model2.parameters():
             p.requires_grad = False
 
         self.model3=Model(pre_model_name[2])
-        self.model3.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[2],'cosine','model_{}.pth'.format(fold))))
+        self.model3.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[2],scheduler,'model_{}.pth'.format(fold))))
         self.model3=self.model3.model
         for p in self.model3.parameters():
             p.requires_grad = False
 
         self.model4=Model(pre_model_name[4])
-        self.model4.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[4],'cosine','model_{}.pth'.format(fold))))
+        self.model4.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[4],scheduler,'model_{}.pth'.format(fold))))
         self.model4=self.model4.model
         for p in self.model4.parameters():
             p.requires_grad = False
 
         self.model5=Model(pre_model_name[5])
-        self.model5.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[5],'cosine','model_{}.pth'.format(fold))))
+        self.model5.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[5],scheduler,'model_{}.pth'.format(fold))))
         self.model5=self.model5.model
         for p in self.model5.parameters():
             p.requires_grad = False
 
         self.model6=Model(pre_model_name[3])
-        self.model6.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[3],'cosine','model_{}.pth'.format(fold))))
+        self.model6.load_state_dict(torch.load(os.path.join(path,'code','models',pre_model_name[3],scheduler,'model_{}.pth'.format(fold))))
         self.model6=self.model6.model
         for p in self.model6.parameters():
             p.requires_grad = False
@@ -189,12 +185,11 @@ class OurModel(LightningModule):
         self.relu=nn.ReLU()
         self.fc2= nn.Linear(500,250)
         self.fc3= nn.Linear(250,1)
-
         self.se=SE_Block(6)
         #parameters
         self.lr=1e-3
         self.batch_size=batch_size
-        self.numworker=4
+        self.numworker=8
         self.criterion=nn.SmoothL1Loss()
         self.metrics=torchmetrics.MeanAbsoluteError()
         self.trainloss,self.valloss,self.dfs=[],[],[]
@@ -208,9 +203,10 @@ class OurModel(LightningModule):
         x6= self.model6(x)
 
         x=torch.stack([x1,x2,x3,x4,x5,x6],-1)#(bs,1000,no of models)
-        # x=torch.transpose(x,1,2)#[192, 6, 1000]
-        # x=self.se(x)
-        # x=torch.transpose(x,1,2)
+        if model_name=='ensemble_se':
+            x=torch.transpose(x,1,2)#[192, 6, 1000]
+            x=self.se(x)
+            x=torch.transpose(x,1,2)
         x=torch.mean(x,dim=-1)
         x=self.fc1(x)
         x=self.relu(x)
@@ -235,7 +231,6 @@ class OurModel(LightningModule):
         
     def train_dataloader(self):
         return DataLoader(DataReader(self.train_split,aug), batch_size = self.batch_size, 
-            #sampler=self.datasampler,
                           num_workers=self.numworker,pin_memory=True,shuffle=True)
 
     def training_step(self,batch,batch_idx):
@@ -283,13 +278,13 @@ class OurModel(LightningModule):
         pred=np.where(pred<0,0,pred)
         df=pd.DataFrame(zip(images_name,pred))
         df.to_csv('predictions/predictions_{}.csv'.format(self.fold),index=False,header=None)
-        #self.dfs.append(df)
+        self.dfs.append(df)
 
 from sklearn.model_selection import KFold,GroupKFold
 import csv
 logfile='log.txt'
 
-model_dict={'ensemble':{'batchsize':192,'img_size':224}}
+model_dict={'ensemble_se':{'batchsize':224,'img_size':224},'ensemble':{'batchsize':224,'img_size':224}}
 
 def pl_trainer(df,fold,scheduler,batch_size):
     
@@ -327,7 +322,6 @@ def logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size
     avg_score=np.round(np.mean(fold_score_metric),3)
     open(logfile, 'a').write("all folds of model {} with scheduler {} are completed. Loss {} and Score {} \n".format(model_name,scheduler,avg_loss,avg_score))
 
-
     with open('result.csv', 'a', newline='') as csvfile:
         fieldnames = ['model_name','scheduler','batchsize','loss','score','img_size']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -335,7 +329,15 @@ def logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size
     open(logfile, 'a').write("============= model completed ================= \n")
     # # sleep(60*5)
 
+def save_csv():
+    dfs=[]
+    for i in range(5):
+        dfs.append(pd.read_csv('predictions/predictions_{}.csv'.format(i),header=None))
 
+    mean_pred=np.mean([i.values[:,1].astype('float') for i in dfs],0)
+    dfs[0].iloc[:,1]=mean_pred
+    dfs[0].to_csv('predictions/predictions.csv',index=False,header=None)
+    dfs[0].to_csv(os.path.join(csv_path_sch,'predictions.csv'),index=False,header=None)
 
 
 validation=True
@@ -355,7 +357,7 @@ if __name__ == "__main__":
         aug=augmentation(img_size)
 
         print('model name',model_name,batch_size,img_size)
-        for scheduler in ['cosine']:
+        for scheduler in ['cosine','warm']:
             fold_score_metric,fold_score_loss=[],[]
             model_path=os.path.join('models',model_name)
             model_path_sch=os.path.join(model_path,scheduler)
@@ -392,6 +394,7 @@ if __name__ == "__main__":
                         fold_score_loss.append(res[0]),fold_score_metric.append(res[1])
                         open(logfile, 'a').write("fold {}  of model {} with scheduler {} is completed. Loss {} and score {} \n".format(fold,model_name,scheduler,res[0],res[1]))
                 logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size,img_size)
+                save_csv()
             else:
                 if validation:
                     for fold,(train_idx,val_idx) in enumerate(kfold.split(df,groups=df.subject)):
@@ -402,5 +405,8 @@ if __name__ == "__main__":
                         fold_score_loss.append(res[0]),fold_score_metric.append(res[1])
                         open(logfile, 'a').write("fold {}  of model {} with scheduler {} is completed. Loss {} and score {} \n".format(fold,model_name,scheduler,res[0],res[1]))
                     logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size,img_size)
+                    save_csv()
                 else:
                     print('model {} is trained already'.format(model_name))
+    
+    

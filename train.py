@@ -33,17 +33,21 @@ import albumentations as A
 
 from albumentations.pytorch import ToTensorV2
 
+
 def augmentation(img_size=224):
     aug= A.Compose([
                 A.Resize(img_size+32,img_size+32),
                 A.CenterCrop(img_size,img_size),
                 A.HorizontalFlip(0.5),
                 A.ShiftScaleRotate(rotate_limit=30),
-                #A.CLAHE(always_apply=True,p=1),
                 A.Normalize(),
                 ToTensorV2(p=1.0),
             ], p=1.0)
     return aug
+
+
+
+
 
 # In[3]:
 
@@ -279,14 +283,14 @@ def logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size
     avg_score=np.round(np.mean(fold_score_metric),3)
     open(logfile, 'a').write("all folds of model {} with scheduler {} are completed. Loss {} and Score {} \n".format(model_name,scheduler,avg_loss,avg_score))
     
-    # dfs=[]
-    # for i in range(5):
-    #     dfs.append(pd.read_csv('predictions/predictions_{}.csv'.format(i),header=None))
+    dfs=[]
+    for i in range(5):
+        dfs.append(pd.read_csv('predictions/predictions_{}.csv'.format(i),header=None))
 
-    # mean_pred=np.mean([i.values[:,1].astype('float') for i in dfs],0)
-    # dfs[0].iloc[:,1]=mean_pred
-    # dfs[0].to_csv('predictions/predictions.csv',index=False,header=None)
-    # dfs[0].to_csv(os.path.join(csv_path_sch,'predictions.csv'),index=False,header=None)
+    mean_pred=np.mean([i.values[:,1].astype('float') for i in dfs],0)
+    dfs[0].iloc[:,1]=mean_pred
+    dfs[0].to_csv('predictions/predictions.csv',index=False,header=None)
+    dfs[0].to_csv(os.path.join(csv_path_sch,'predictions.csv'),index=False,header=None)
 
     with open('result.csv', 'a', newline='') as csvfile:
         fieldnames = ['model_name','scheduler','batchsize','loss','score','img_size']
@@ -298,7 +302,7 @@ def logresults(fold_score_loss,fold_score_metric,model_name,scheduler,batch_size
 
 
 
-validation=True
+validation=False
 if __name__ == "__main__":
 
     seed_everything(0)
@@ -315,7 +319,7 @@ if __name__ == "__main__":
         aug=augmentation(img_size)
 
         print('model name',model_name,batch_size,img_size)
-        for scheduler in ['cosine']:
+        for scheduler in ['cosine','warm','constant']:
             fold_score_metric,fold_score_loss=[],[]
             model_path=os.path.join('models',model_name)
             model_path_sch=os.path.join(model_path,scheduler)
